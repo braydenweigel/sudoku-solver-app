@@ -76,6 +76,7 @@ function isEditableTarget(target: EventTarget | null) {
   return false
 }
 
+/** Applies the "light" or "dark" class to <html> (persisted to localStorage; "system" follows the OS). Pressing "d" toggles. Wrap the app once at the root. */
 export function ThemeProvider({
   children,
   defaultTheme = "system",

@@ -39,6 +39,7 @@ const buttonVariants = cva(
   }
 )
 
+/** Base UI button styled with the theme tokens. Variants: default (primary blue), outline, secondary, ghost, destructive, link. Put lucide icons inside with `data-icon="inline-start"`. */
 function Button({
   className,
   variant = "default",
