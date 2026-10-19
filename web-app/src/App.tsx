@@ -90,10 +90,10 @@ export function App() {
   return (
     <div className="flex min-h-svh flex-col bg-background text-foreground antialiased">
       <header className="border-b bg-card">
-        <div className="mx-auto flex h-15 max-w-[1120px] items-center justify-between gap-4 pr-3 pl-4 md:h-16 md:px-6">
+        <div className="mx-auto flex h-15 max-w-280 items-center justify-between gap-4 pr-3 pl-4 md:h-16 md:px-6">
           <div className="flex items-center gap-2.5">
-            <span className="inline-flex size-[30px] items-center justify-center rounded-lg bg-primary text-primary-foreground md:size-8">
-              <Grid3x3Icon className="size-[17px] md:size-[18px]" aria-hidden="true" />
+            <span className="inline-flex size-7.5 items-center justify-center rounded-lg bg-primary text-primary-foreground md:size-8">
+              <Grid3x3Icon className="size-4.25 md:size-4.5" aria-hidden="true" />
             </span>
             <span className="text-base font-semibold tracking-[-0.01em] md:text-[15px]">
               Sudoku Solver
@@ -110,12 +110,12 @@ export function App() {
         </div>
       </header>
 
-      <main className="mx-auto flex w-full max-w-[1120px] flex-1 flex-col gap-4 px-4 pt-5 pb-6 md:block md:flex-none md:px-6 md:pt-10 md:pb-14">
+      <main className="mx-auto flex w-full max-w-280 flex-1 flex-col gap-4 px-4 pt-5 pb-6 md:block md:flex-none md:px-6 md:pt-10 md:pb-14">
         <div className="mb-7 hidden md:block">
-          <h1 className="text-3xl leading-tight font-bold tracking-[-0.025em]">
+          <h1 className="text-3xl leading-tight font-bold tracking-tight">
             Solve any Sudoku
           </h1>
-          <p className="mt-2 max-w-[580px] text-[15px] leading-[1.55] text-muted-foreground">
+          <p className="mt-2 max-w-145 text-[15px] leading-[1.55] text-muted-foreground">
             Type the digits from your puzzle into the grid, then solve the whole thing or reveal
             one square at a time.
           </p>
@@ -145,7 +145,7 @@ export function App() {
               selected={selected}
               onSelect={select}
               onInput={setDigit}
-              className="mx-auto max-w-[540px]"
+              className="mx-auto max-w-135"
             />
 
             <BoardLegend className="hidden md:flex" />
@@ -203,7 +203,7 @@ export function App() {
                   {message.text}
                 </SolverStatus>
               )}
-              <Button onClick={solve} className="h-12 rounded-[10px] text-[15px] shadow-xs [&_svg:not([class*='size-'])]:size-[18px]">
+              <Button onClick={solve} className="h-12 rounded-[10px] text-[15px] shadow-xs [&_svg:not([class*='size-'])]:size-4.5">
                 <SparklesIcon data-icon="inline-start" />
                 Solve puzzle
               </Button>
@@ -211,7 +211,7 @@ export function App() {
                 <Button
                   variant="outline"
                   onClick={hint}
-                  className="h-12 rounded-[10px] bg-card text-[15px] shadow-xs dark:bg-card [&_svg:not([class*='size-'])]:size-[18px]"
+                  className="h-12 rounded-[10px] bg-card text-[15px] shadow-xs dark:bg-card [&_svg:not([class*='size-'])]:size-4.5"
                 >
                   <LightbulbIcon data-icon="inline-start" />
                   Reveal one square
@@ -220,7 +220,7 @@ export function App() {
                   variant="outline"
                   aria-label="Clear board"
                   onClick={clear}
-                  className="size-12 rounded-[10px] bg-card text-muted-foreground shadow-xs dark:bg-card [&_svg:not([class*='size-'])]:size-[18px]"
+                  className="size-12 rounded-[10px] bg-card text-muted-foreground shadow-xs dark:bg-card [&_svg:not([class*='size-'])]:size-4.5"
                 >
                   <RotateCcwIcon />
                 </Button>
