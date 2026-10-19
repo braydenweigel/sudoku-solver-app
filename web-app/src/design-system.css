@@ -1,0 +1,28 @@
+/*
+ * Stylesheet for the design-system build (`npm run build:ds`). Tailwind only
+ * emits classes it finds in source, so this safelists a layout/typography/
+ * token vocabulary for designs composed outside this repo.
+ */
+@import "./index.css";
+@source "../.design-sync/previews";
+
+@source inline("{md:,}{flex,inline-flex,grid,block,inline-block,hidden,contents}");
+@source inline("{md:,}{flex-row,flex-col,flex-wrap,flex-1,flex-none,shrink-0,grow}");
+@source inline("{md:,}{items-start,items-center,items-end,items-stretch,justify-start,justify-center,justify-end,justify-between,self-start,self-center}");
+@source inline("{md:,}grid-cols-{1,2,3,4,5,6,9,12}");
+@source inline("{md:,}col-span-{1,2,3,4,full}");
+@source inline("{md:,}gap-{0,0.5,1,1.5,2,2.5,3,4,5,6,8,10,12}");
+@source inline("{md:,}{gap-x,gap-y,space-y,space-x}-{1,2,3,4,6,8}");
+@source inline("{md:,}{p,px,py,pt,pb,pl,pr}-{0,1,1.5,2,2.5,3,4,5,6,8,10,12,16}");
+@source inline("{md:,}{m,mx,my,mt,mb,ml,mr}-{0,1,2,3,4,6,8,10,12,auto}");
+@source inline("{md:,}{w,h,size}-{4,5,6,8,9,10,11,12,16,20,24,full,auto}");
+@source inline("{md:,}{min-h-svh,min-h-0,min-w-0,h-svh,w-fit}");
+@source inline("{md:,}max-w-{xs,sm,md,lg,xl,2xl,3xl,4xl,5xl,6xl,7xl,prose,full}");
+@source inline("{md:,}text-{xs,sm,base,lg,xl,2xl,3xl,4xl,5xl}");
+@source inline("font-{sans,mono,normal,medium,semibold,bold} tracking-{tight,tighter,normal} leading-{none,tight,snug,normal,relaxed}");
+@source inline("text-{left,center,right} tabular-nums truncate whitespace-nowrap uppercase antialiased");
+@source inline("{hover:,}bg-{background,foreground,card,popover,muted,primary,secondary,accent,destructive,destructive-soft,cell,cell-peer,cell-selected,grid-line,grid-box,transparent}");
+@source inline("text-{foreground,muted-foreground,card-foreground,primary,primary-foreground,secondary-foreground,accent-foreground,destructive,solver}");
+@source inline("border{,-0,-2,-t,-b,-l,-r} border-{border,input,primary,destructive,grid-box,transparent}");
+@source inline("rounded{,-sm,-md,-lg,-xl,-2xl,-full,-none} shadow-{xs,sm,md,lg,none} ring-{0,1,2} ring-{foreground/10,ring,primary}");
+@source inline("{overflow-hidden,overflow-auto,relative,absolute,inset-0,sticky,top-0,z-10,aspect-square,cursor-pointer,select-none,opacity-50,divide-y}");

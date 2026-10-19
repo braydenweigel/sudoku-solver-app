@@ -1,0 +1,47 @@
+{
+  "shape": "package",
+  "pkg": "web-app",
+  "globalName": "SudokuSolverUI",
+  "buildCmd": "npm run build:ds",
+  "entry": "src/design-system.ts",
+  "tsconfig": "tsconfig.app.json",
+  "cssEntry": "build/ds/styles.css",
+  "provider": {
+    "component": "ThemeProvider",
+    "props": {
+      "defaultTheme": "light"
+    }
+  },
+  "componentSrcMap": {
+    "CardAction": null,
+    "CardContent": null,
+    "CardDescription": null,
+    "CardFooter": null,
+    "CardHeader": null,
+    "CardTitle": null,
+    "KbdGroup": null
+  },
+  "docsMap": {
+    "Badge": ".design-sync/docs/primitives.md",
+    "Button": ".design-sync/docs/primitives.md",
+    "Card": ".design-sync/docs/primitives.md",
+    "Kbd": ".design-sync/docs/primitives.md",
+    "ThemeProvider": ".design-sync/docs/primitives.md",
+    "ThemeToggle": ".design-sync/docs/primitives.md"
+  },
+  "overrides": {
+    "Button": {
+      "cardMode": "column"
+    },
+    "Card": {
+      "cardMode": "column"
+    },
+    "NumberPad": {
+      "cardMode": "column"
+    },
+    "SudokuBoard": {
+      "cardMode": "column"
+    }
+  },
+  "readmeHeader": ".design-sync/conventions.md"
+}
