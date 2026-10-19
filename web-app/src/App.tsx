@@ -113,18 +113,18 @@ export function App() {
       <main className="mx-auto flex w-full max-w-280 flex-1 flex-col gap-4 px-4 pt-5 pb-6 md:block md:flex-none md:px-6 md:pt-10 md:pb-14">
         <div className="mb-7 hidden md:block">
           <h1 className="text-3xl leading-tight font-bold tracking-tight">
-            Solve any Sudoku
+            Solve any Sudoku Puzzle
           </h1>
           <p className="mt-2 max-w-145 text-[15px] leading-[1.55] text-muted-foreground">
-            Type the digits from your puzzle into the grid, then solve the whole thing or reveal
+            Type the digits from your puzzle into the grid, then solve the whole puzzle or reveal
             one square at a time.
           </p>
         </div>
 
-        <div className="flex flex-1 flex-col gap-4 md:flex-row md:flex-wrap md:items-start md:gap-6">
-          <section className="flex min-w-0 flex-col gap-4 md:flex-[999_1_560px] md:gap-5 md:rounded-xl md:border md:bg-card md:p-6 md:shadow-xs">
-            <div className="flex flex-wrap items-start justify-between gap-3 md:gap-4">
-              <div>
+        <div className="flex flex-1 flex-col gap-4 md:gap-6 lg:flex-row">
+          <section className="flex min-w-0 flex-col gap-4 md:gap-5 md:rounded-xl md:border md:bg-card md:p-6 md:shadow-xs lg:flex-1">
+            <div className="flex items-start justify-between gap-3 md:gap-4">
+              <div className="min-w-0">
                 <h2 className="text-xl leading-tight font-bold tracking-[-0.02em] md:text-base md:font-semibold md:tracking-[-0.01em]">
                   Your puzzle
                 </h2>
@@ -136,7 +136,16 @@ export function App() {
                 </p>
               </div>
               <BoardStatus filled={filled} clashes={clashes} format="compact" className="md:hidden" />
-              <BoardStatus filled={filled} clashes={clashes} className="hidden md:inline-flex" />
+              <div className="hidden shrink-0 items-center gap-2 md:flex">
+                {/* Fixed width so the description wraps the same whatever the badge says. */}
+                <span className="flex w-28 justify-end">
+                  <BoardStatus filled={filled} clashes={clashes} />
+                </span>
+                <Button variant="ghost" size="sm" onClick={clear} className="text-muted-foreground">
+                  <RotateCcwIcon data-icon="inline-start" />
+                  Clear board
+                </Button>
+              </div>
             </div>
 
             <SudokuBoard
@@ -151,14 +160,14 @@ export function App() {
             <BoardLegend className="hidden md:flex" />
           </section>
 
-          {/* Desktop: side panel of cards. */}
-          <aside className="hidden min-w-0 flex-col gap-4 md:flex md:flex-[1_1_300px]">
-            <Card className="gap-4 shadow-xs [--card-spacing:--spacing(5)]">
+          {/* Tablet: two equal cards under the board. Desktop: a column stretched to the board card's height. */}
+          <aside className="hidden min-w-0 gap-4 md:grid md:grid-cols-2 lg:flex lg:w-75 lg:flex-none lg:flex-col">
+            <Card className="gap-4 shadow-xs [--card-spacing:--spacing(5)] lg:flex-1">
               <CardHeader>
                 <CardTitle className="font-semibold tracking-[-0.01em]">Solve</CardTitle>
                 <CardDescription>Answers go straight onto the board in blue.</CardDescription>
               </CardHeader>
-              <CardContent className="flex flex-col gap-4">
+              <CardContent className="flex flex-1 flex-col gap-4">
                 <div className="flex flex-col gap-2">
                   <Button onClick={solve} className="h-10 shadow-xs">
                     <SparklesIcon data-icon="inline-start" />
@@ -169,12 +178,17 @@ export function App() {
                     Reveal one square
                   </Button>
                 </div>
-                {message && <SolverStatus tone={message.tone}>{message.text}</SolverStatus>}
-                <div className="h-px bg-border" />
-                <Button variant="ghost" onClick={clear} className="h-9 text-muted-foreground">
-                  <RotateCcwIcon data-icon="inline-start" />
-                  Clear board
-                </Button>
+                {/* Fixed slot so a result message never changes the card's height. */}
+                {message ? (
+                  <SolverStatus tone={message.tone} className="min-h-21 flex-1">
+                    {message.text}
+                  </SolverStatus>
+                ) : (
+                  <p className="m-0 min-h-21 flex-1 rounded-lg border border-dashed px-3 py-2.5 text-[13px] leading-[1.45] text-muted-foreground">
+                    Solve fills every empty square. Reveal places the square with the fewest
+                    possible digits.
+                  </p>
+                )}
               </CardContent>
             </Card>
 

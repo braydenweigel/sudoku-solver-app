@@ -25,6 +25,15 @@ type SudokuBoardProps = Omit<React.ComponentProps<"div">, "onSelect" | "onInput"
   size?: "default" | "sm"
 }
 
+// The board is rounded-[10px] with a 2px border, so its inner edge curves at
+// 8px. Corner squares match it so their selection ring isn't clipped.
+const CORNER_RADIUS: Record<number, string> = {
+  0: "rounded-tl-[8px]",
+  8: "rounded-tr-[8px]",
+  72: "rounded-bl-[8px]",
+  80: "rounded-br-[8px]",
+}
+
 const MOVES: Record<string, number> = {
   ArrowUp: -9,
   ArrowDown: 9,
@@ -138,7 +147,8 @@ function SudokuBoard({
                     "data-[state=peer]:bg-cell-peer data-[state=match]:bg-cell-selected data-[state=selected]:bg-cell-selected",
                     "data-[origin=solved]:font-medium data-[origin=solved]:text-solver",
                     "data-[state=clash]:bg-destructive-soft data-[state=clash]:text-destructive",
-                    "data-selected:shadow-[inset_0_0_0_2px_var(--solver)]"
+                    "data-selected:shadow-[inset_0_0_0_2px_var(--solver)]",
+                    CORNER_RADIUS[i]
                   )}
                 >
                   {v || ""}
