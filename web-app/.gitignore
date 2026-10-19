@@ -22,3 +22,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# design-sync (machine state; .design-sync/ durable files are committed)
+.ds-sync/
+ds-bundle/
+build/
+.design-sync/.cache/
+.design-sync/learnings/
+.design-sync/node_modules
