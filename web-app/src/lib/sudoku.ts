@@ -184,36 +184,50 @@ export async function solvePuzzle(values: Grid, origins: CellOrigin[]): Promise<
 }
 
 /** Reveal the empty square with the fewest candidates. */
-export function revealOne(values: Grid, origins: CellOrigin[]): SolverResult {
+export async function revealOne(values: Grid, origins: CellOrigin[]): Promise<SolverResult> {
   const problem = validate(values)
   if (problem) return { message: problem }
 
-  //POST /hint
+  const puzzle = values.join("")
 
-  const solution = solveGrid(values)
-  if (!solution) return { message: NO_SOLUTION }
+  //POST /hint, response: { move: { row, col, digit, confidence } } (row/col 0-based)
+  const res = await fetch(API_URL + "/hint", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ puzzle }),
+  })
+  if (!res.ok) return { message: { tone: "error", text: "Error Fetching Hint" } }
 
-  let best = -1
-  let fewest = 10
-  for (let i = 0; i < 81; i++) {
-    if (values[i]) continue
-    const n = candidates(values, i).length
-    if (n < fewest) {
-      fewest = n
-      best = i
-    }
+  const { move } = (await res.json()) as {
+    move?: { row: number; col: number; digit: number; confidence: number }
   }
+
+  //reject a missing or out-of-range move, or one that targets a filled square
+  const valid =
+    move &&
+    Number.isInteger(move.row) && move.row >= 0 && move.row < 9 &&
+    Number.isInteger(move.col) && move.col >= 0 && move.col < 9 &&
+    Number.isInteger(move.digit) && move.digit >= 1 && move.digit <= 9 &&
+    !values[move.row * 9 + move.col]
+  if (!valid) return { message: NO_SOLUTION }
+
+  //the digit must not repeat in its row, column or box
+  const i = move.row * 9 + move.col
+  if (!fits(values, i, move.digit)) {
+    return { message: { tone: "error", text: "The hint conflicted with the board, so it wasn’t placed. Try again." } }
+  }
+
   const nextValues = values.slice()
   const nextOrigins = origins.slice()
-  nextValues[best] = solution[best]
-  nextOrigins[best] = "solved"
+  nextValues[i] = move.digit
+  nextOrigins[i] = "solved"
   return {
     values: nextValues,
     origins: nextOrigins,
-    selected: best,
+    selected: i,
     message: {
       tone: "ok",
-      text: `Placed ${solution[best]} at row ${rowOf(best) + 1}, column ${colOf(best) + 1}.`,
+      text: `Placed ${move.digit} at row ${move.row + 1}, column ${move.col + 1}.`,
     },
   }
 }
