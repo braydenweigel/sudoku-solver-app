@@ -13,6 +13,8 @@ export type SolverResult = {
   message: SolverMessage
 }
 
+const API_URL = import.meta.env.VITE_API_URL
+
 export const EXAMPLE_PUZZLE =
   "530070000600195000098000060800060003400803001700020006060000280000419005000080079"
 
@@ -130,33 +132,64 @@ const NO_SOLUTION: SolverMessage = {
 }
 
 /** Fill every empty square, marking the new digits as solved. */
-export function solvePuzzle(values: Grid, origins: CellOrigin[]): SolverResult {
+export async function solvePuzzle(values: Grid, origins: CellOrigin[]): Promise<SolverResult> {
   const problem = validate(values)
   if (problem) return { message: problem }
   const t0 = performance.now()
-  const solution = solveGrid(values)
-  const ms = Math.max(1, Math.round(performance.now() - t0))
-  if (!solution) return { message: NO_SOLUTION }
 
-  const nextOrigins = origins.slice()
-  let filled = 0
-  for (let i = 0; i < 81; i++) {
-    if (!values[i]) {
-      nextOrigins[i] = "solved"
-      filled++
+  //convert number[] to string for API request
+  const puzzle = values.join("")
+
+  //POST /solve, use "one_at_a_time"
+  const res = await fetch(API_URL + "/solve", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ puzzle, method: "one_at_a_time" }),
+  })
+
+
+  //if !solved, return error
+  if (res.status == 200){
+    const data = await res.json()
+
+    if (!data.solved) return { message: NO_SOLUTION }
+
+    const solution: number[] = Array.from(data.solution, Number)
+    const ms = Math.max(1, Math.round(performance.now() - t0))
+
+    //counts how many squares the model solved
+    const nextOrigins = origins.slice()
+    let filled = 0
+    for (let i = 0; i < 81; i++) {
+      if (!values[i]) {
+        nextOrigins[i] = "solved"
+        filled++
+      }
+    }
+    return {
+      values: solution,
+      origins: nextOrigins,
+      message: { tone: "ok", text: `Solved — filled ${filled} squares in ${ms} ms.` },
+    }
+
+  } 
+
+  return {
+    message: {
+      tone: "error",
+      text: "Error Fetching Solution"
     }
   }
-  return {
-    values: solution,
-    origins: nextOrigins,
-    message: { tone: "ok", text: `Solved — filled ${filled} squares in ${ms} ms.` },
-  }
+
 }
 
 /** Reveal the empty square with the fewest candidates. */
 export function revealOne(values: Grid, origins: CellOrigin[]): SolverResult {
   const problem = validate(values)
   if (problem) return { message: problem }
+
+  //POST /hint
+
   const solution = solveGrid(values)
   if (!solution) return { message: NO_SOLUTION }
 

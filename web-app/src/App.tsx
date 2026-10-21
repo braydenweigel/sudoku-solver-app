@@ -67,19 +67,46 @@ export function App() {
       return { ...p, values: nextValues, origins: nextOrigins, message: null }
     })
 
-  const run = (action: (values: Grid, origins: CellOrigin[]) => SolverResult) =>
-    setPuzzle((p) => {
-      const result = action(p.values, p.origins)
-      return {
-        values: result.values ?? p.values,
-        origins: result.origins ?? p.origins,
-        selected: result.selected ?? p.selected,
-        message: result.message,
-      }
-    })
+  // Which solver request is in flight, if any. Buttons are disabled meanwhile.
+  const [pending, setPending] = React.useState<"solve" | "hint" | null>(null)
 
-  const solve = () => run(solvePuzzle)
-  const hint = () => run(revealOne)
+  const run = async (
+    kind: "solve" | "hint",
+    action: (values: Grid, origins: CellOrigin[]) => SolverResult | Promise<SolverResult>
+  ) => {
+    if (pending) return
+    const { values, origins } = puzzle // the board being sent
+    setPending(kind)
+    try {
+      const result = await action(values, origins)
+      setPuzzle((p) =>
+        // The board was edited while waiting, so this answer is for an old board.
+        p.values !== values
+          ? p
+          : {
+              values: result.values ?? p.values,
+              origins: result.origins ?? p.origins,
+              selected: result.selected ?? p.selected,
+              message: result.message,
+            }
+      )
+    } catch {
+      setPuzzle((p) => ({
+        ...p,
+        message: {
+          tone: "error",
+          text: "Couldn’t reach the solver. Check your connection and try again.",
+        },
+      }))
+    } finally {
+      setPending(null)
+    }
+  }
+
+  const solve = () => run("solve", solvePuzzle)
+  const hint = () => run("hint", revealOne)
+  const solveLabel = pending === "solve" ? "Solving…" : "Solve puzzle"
+  const hintLabel = pending === "hint" ? "Revealing…" : "Reveal one square"
   const clear = () =>
     setPuzzle((p) => {
       const empty = emptyGrid()
@@ -169,13 +196,13 @@ export function App() {
               </CardHeader>
               <CardContent className="flex flex-1 flex-col gap-4">
                 <div className="flex flex-col gap-2">
-                  <Button onClick={solve} className="h-10 shadow-xs">
+                  <Button onClick={solve} disabled={pending !== null} className="h-10 shadow-xs">
                     <SparklesIcon data-icon="inline-start" />
-                    Solve puzzle
+                    {solveLabel}
                   </Button>
-                  <Button variant="outline" onClick={hint} className="h-10 bg-card shadow-xs dark:bg-card">
+                  <Button variant="outline" onClick={hint} disabled={pending !== null} className="h-10 bg-card shadow-xs dark:bg-card">
                     <LightbulbIcon data-icon="inline-start" />
-                    Reveal one square
+                    {hintLabel}
                   </Button>
                 </div>
                 {/* Fixed slot so a result message never changes the card's height. */}
@@ -217,18 +244,19 @@ export function App() {
                   {message.text}
                 </SolverStatus>
               )}
-              <Button onClick={solve} className="h-12 rounded-[10px] text-[15px] shadow-xs [&_svg:not([class*='size-'])]:size-4.5">
+              <Button onClick={solve} disabled={pending !== null} className="h-12 rounded-[10px] text-[15px] shadow-xs [&_svg:not([class*='size-'])]:size-4.5">
                 <SparklesIcon data-icon="inline-start" />
-                Solve puzzle
+                {solveLabel}
               </Button>
               <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-2">
                 <Button
                   variant="outline"
                   onClick={hint}
+                  disabled={pending !== null}
                   className="h-12 rounded-[10px] bg-card text-[15px] shadow-xs dark:bg-card [&_svg:not([class*='size-'])]:size-4.5"
                 >
                   <LightbulbIcon data-icon="inline-start" />
-                  Reveal one square
+                  {hintLabel}
                 </Button>
                 <Button
                   variant="outline"
